@@ -1,4 +1,3 @@
-
 // ------------------------
 // Setting up the variables
 // ------------------------
@@ -22,7 +21,7 @@ const NUMBER_OF_FILES_TO_LOAD = 3;
 
 $(document).ready(function(){
 	var pkmn = new Pokemon(621);
-	console.log( pkmn );
+	console.log( pkmn.getName() );
 });
 
 // Don't launch .ready function until directed
@@ -99,7 +98,6 @@ function Pokemon(number){
 				return pokeTypes[i][POKEMON_TYPE];
 			}
 		}
-
 		throw "No primary type for pokemon #" + number;
 	}
 
@@ -108,6 +106,7 @@ function Pokemon(number){
 	function findType2( number ) {
 		for (i = 1; i < pokeTypes.length; i++) {
 			if ( pokeTypes[i][POKEMON_ID] == number) {
+				//If not the last one, check if the next row has the same pokemon
 				if ( i != pokeTypes.length - 1 && pokeTypes[i+1][POKEMON_ID] == number)
 					return pokeTypes[i+1][POKEMON_TYPE];
 				else
