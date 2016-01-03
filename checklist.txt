@@ -1,0 +1,9 @@
+things we need
+- all the types
+	- icons
+	- weaknesses/ strengths
+	- exceptions
+- load pokemon
+	- smogon additional grouping restrictions
+- pokemon pictures from serebii/bulbapedia
+- default explaining reasoning
