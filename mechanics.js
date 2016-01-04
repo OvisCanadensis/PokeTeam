@@ -20,8 +20,7 @@ const NUMBER_OF_FILES_TO_LOAD = 3;
 // -----------------------
 
 $(document).ready(function(){
-	var pkmn = new Pokemon(621);
-	console.log( pkmn.getName() );
+	console.log(nameToID("Mega Charizard"));
 });
 
 // Don't launch .ready function until directed
@@ -120,4 +119,23 @@ function Pokemon(number){
 // This doesn't seem to be working?
 Pokemon.prototype.toString = function pokemonToString() {
     return this.pokeName;
+}
+
+function nameToID( name ){
+	if ( typeof name != typeof "random_string")
+		throw "Pokemon name not a string?";
+
+	if ( isNotAlpha(name))
+		throw "Pokemon names are only letters. Unless stupid nidoran";
+
+	for (var i = 1; i < pokeNames.length; i++) {
+		if (pokeNames[i][POKEMON_NAME] == name.toLowerCase())
+			return pokeNames[i][POKEMON_ID];
+	}
+
+	return -1;
+}
+
+function isNotAlpha(name) {
+    return /[^a-zA-Z]/.test(name)
 }
