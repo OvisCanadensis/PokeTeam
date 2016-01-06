@@ -6,6 +6,7 @@
 var pokeNames;
 var pokeTypes;
 var pokeAbilities;
+var pokeTypeEfficacy;
 
 //CSV Index References
 const POKEMON_ID = 0;
@@ -13,14 +14,22 @@ const POKEMON_NAME = 1;
 const POKEMON_TYPE = 1;
 
 var dataCounter = 0;
-const NUMBER_OF_FILES_TO_LOAD = 3;
+const NUMBER_OF_FILES_TO_LOAD = 4;
 
+const POKEMON_TYPE_NAMES= [ "normal", "fighting", "flying", "poison", "ground", "rock", "bug",
+"ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy", "unknown", "shadow"];
+
+function typeConverter( type){
+	result = POKEMON_TYPE_NAMES.indexOf(type) + 1;
+	if ( result < 1 )
+		throw "Invalid Pokmeon Type: " + type;
+	return result;
+}
 // -----------------------
 // Onwards
 // -----------------------
 
 $(document).ready(function(){
-	console.log(nameToID("Mega Charizard"));
 });
 
 // Don't launch .ready function until directed
@@ -44,6 +53,15 @@ Papa.parse("https://raw.githubusercontent.com/phalt/pokeapi/master/data/v2/csv/p
 
 	complete: function(results) {
 		pokeNames = results.data;
+		delayStart();
+	}
+});
+
+Papa.parse("https://raw.githubusercontent.com/phalt/pokeapi/master/data/v2/csv/type_efficacy.csv", {
+	download: true,
+
+	complete: function(results) {
+		pokeTypeEfficacy = results.data;
 		delayStart();
 	}
 });
@@ -86,6 +104,7 @@ function Pokemon(number){
 	var type2 = findType2(number);
 	this.getType2 = function() { return type2; }
 
+
 	//Must decide how to implement abilties
 	// Multiple and hidden abilities etc.
 
@@ -116,26 +135,64 @@ function Pokemon(number){
 	}
 }
 
+
+
 // This doesn't seem to be working?
 Pokemon.prototype.toString = function pokemonToString() {
     return this.pokeName;
 }
 
+function typeEfficacy ( offense, defense){
+	if ( offense > 18 || offense < 1 )
+		throw "Invalid offense type: " + offense;
+
+	if ( defense > 18 || defense < 1 )
+		throw "Invalid defense type: " + defense;
+
+	for ( i = 0; i < pokeTypeEfficacy.length; i++)
+	{
+		if ( pokeTypeEfficacy[i][0] == offense && pokeTypeEfficacy[i][1] == defense )
+			return pokeTypeEfficacy[i][2];
+	}
+
+	throw "This should never happen";
+}
+
+
+//Returns the row index of the pokemon
+//Thus ID's > 10,000 are reduced to circa 800
 function nameToID( name ){
 	if ( typeof name != typeof "random_string")
 		throw "Pokemon name not a string?";
 
+	// if ( name.indexOf(' ') > 0)
+	// {
+	// 	console.log(name.replace(' ', '-'));
+	// 	return nameToID(name.replace(' ', '-'));
+	// }
+
 	if ( isNotAlpha(name))
-		throw "Pokemon names are only letters. Unless stupid nidoran";
+		throw "Pokemon names are only letters. Unless stupid nidoran: " + name;
 
 	for (var i = 1; i < pokeNames.length; i++) {
 		if (pokeNames[i][POKEMON_NAME] == name.toLowerCase())
-			return pokeNames[i][POKEMON_ID];
+			return i;
 	}
-
 	return -1;
 }
 
+//Checks if the string is only letters
 function isNotAlpha(name) {
-    return /[^a-zA-Z]/.test(name)
+	alphabet = "abcdefghijklmnopqrstuvwxyz";
+	uppercase = alphabet.toUpperCase();
+
+	for (i = 0; i < name.length; i++)
+	{
+		letter = name[i];
+		if ( alphabet.indexOf(letter) < 0 && uppercase.indexOf(letter) < 0 )
+		{
+			return true;
+		}
+	}
+	return false;
 }
